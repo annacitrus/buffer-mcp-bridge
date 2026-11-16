@@ -1,0 +1,57 @@
+# Self-hosting template. Provider, domain, backups, and image digests must be configured first.
+services:
+  db:
+    image: postgres:17.12-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bridge
+      POSTGRES_USER: bridge
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets: [db_password]
+    volumes: ["pgdata:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bridge -d bridge"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  app:
+    build: .
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      NODE_ENV: production
+      DATABASE_URL_FILE: /run/secrets/database_url
+      ENCRYPTION_KEYS_FILE: /run/secrets/encryption_keys
+      OIDC_CLIENT_SECRET_FILE: /run/secrets/admin_secret
+      INTROSPECTION_CLIENT_SECRET_FILE: /run/secrets/resource_secret
+    secrets: [database_url, encryption_keys, admin_secret, resource_secret]
+    depends_on:
+      db: { condition: service_healthy }
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    stop_grace_period: 50s
+  caddy:
+    image: caddy:2.11.9-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443"]
+    environment:
+      BRIDGE_DOMAIN: ${BRIDGE_DOMAIN:?Set a public DNS name}
+    volumes:
+      [
+        "./Caddyfile:/etc/caddy/Caddyfile:ro",
+        "caddydata:/data",
+        "caddyconfig:/config",
+      ]
+    depends_on: [app]
+secrets:
+  db_password: { file: ./secrets/db-password }
+  database_url: { file: ./secrets/database-url }
+  encryption_keys: { file: ./secrets/encryption-keys.json }
+  admin_secret: { file: ./secrets/admin-client-secret }
+  resource_secret: { file: ./secrets/resource-client-secret }
+volumes:
+  pgdata:
+  caddydata:
+  caddyconfig:

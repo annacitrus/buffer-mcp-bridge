@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+!.env.production.example
+secrets/
+*.key
+*.pem
+probe-private.json
+coverage/
+config/catalog.json
+config/buffer-contract.json
+*.dump
+*.backup

@@ -1,0 +1,6 @@
+{$BRIDGE_DOMAIN} {
+    # Access logging stays disabled: OAuth callback queries contain authorization codes.
+    reverse_proxy app:3000 {
+        flush_interval -1
+    }
+}

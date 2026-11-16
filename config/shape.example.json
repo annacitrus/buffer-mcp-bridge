@@ -1,0 +1,15 @@
+{
+  "_warning": "ILLUSTRATIVE ONLY. Replace pointers from actual probe responses. These are not verified Buffer response shapes. Paths are relative to structuredContent or parsed JSON text.",
+  "account": "/account",
+  "accountId": "/id",
+  "email": "/email",
+  "name": "/name",
+  "organizations": "/organizations",
+  "organizationId": "/id",
+  "organizationName": "/name",
+  "channels": "/channels",
+  "channelId": "/id",
+  "channelName": "/name",
+  "pageInfo": "/pageInfo",
+  "postChannelId": "/post/channel/id"
+}

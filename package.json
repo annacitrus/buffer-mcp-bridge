@@ -1,0 +1,54 @@
+{
+  "name": "buffer-multi-account-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0 <25"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node --env-file-if-exists=.env dist/src/main.js",
+    "dev": "tsx --env-file-if-exists=.env src/main.ts",
+    "probe": "tsx --env-file-if-exists=.env scripts/probe.ts",
+    "migrate": "tsx --env-file-if-exists=.env scripts/migrate.ts",
+    "rotate-encryption": "tsx --env-file-if-exists=.env scripts/rotate-encryption.ts",
+    "test": "tsx --test test/*.test.ts",
+    "check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "2.4.0",
+    "@modelcontextprotocol/node": "2.1.2",
+    "@modelcontextprotocol/server": "2.4.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "cookie": "2.0.2",
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.4",
+    "helmet": "8.3.0",
+    "openid-client": "6.9.0",
+    "pg": "8.23.1"
+  },
+  "devDependencies": {
+    "@types/express": "5.0.6",
+    "@types/node": "26.6.6",
+    "@types/pg": "8.23.1",
+    "@types/supertest": "7.2.1",
+    "pg-mem": "3.0.14",
+    "prettier": "3.10.1",
+    "supertest": "7.3.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2"
+  },
+  "description": "A self-hosted multi-account Buffer MCP bridge with an encrypted account registry, OAuth, and a web admin interface.",
+  "license": "MIT",
+  "author": "Anna Citron",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annacitrus/buffer-mcp-bridge.git"
+  },
+  "bugs": {
+    "url": "https://github.com/annacitrus/buffer-mcp-bridge/issues"
+  },
+  "homepage": "https://github.com/annacitrus/buffer-mcp-bridge#readme"
+}
