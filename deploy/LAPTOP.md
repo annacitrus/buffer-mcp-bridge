@@ -53,7 +53,7 @@ docker compose --env-file .env.laptop -f deploy/laptop.compose.yaml up -d app
 
 Funnel publishes the gateway to the internet. Do not point it at your project folder, database, Keycloak admin port, or a different app. Leave existing Funnel configuration intact if this machine already shares another service; resolve the routing conflict before running this command.
 
-Open `secrets/laptop-access.json` **locally in a trusted editor** to obtain the owner temporary password and URLs. At the public bridge `/admin`, sign in as `owner` and complete the required password change yourself. Add and verify the two Buffer accounts in the bridge admin UI. The Keycloak local bootstrap-admin password is for administration only, not Claude login.
+Open `secrets/laptop-access.json` **locally in a trusted editor** to obtain the owner temporary password and URLs. At the public bridge `/admin`, sign in as `owner` and complete the required password change yourself. Add and verify your Buffer accounts in the bridge admin UI. The Keycloak local bootstrap-admin password is for administration only, not Claude login.
 
 Verify the public issuer discovery document, S256 enforcement, wrong-resource rejection, expiry and revocation. Confirm unauthorized MCP calls return 401. Check that `/identity/admin/` and the master realm cannot be reached at the public hostname. If any check fails, disable Funnel and diagnose locally.
 
@@ -61,7 +61,7 @@ Verify the public issuer discovery document, S256 enforcement, wrong-resource re
 
 At **Customize → Connectors → Add custom connector**, set the name to **Buffer Multi-Account** and the URL to the private access file's `bridge_url`. Choose OAuth **Use your own OAuth client**. The client ID and secret are in that same private file. Enter them only into Claude's connector settings, then sign in as `owner`.
 
-Run `bridge_list_accounts` and check both identities. Test reads before allowing writes. Keep the existing Buffer Personal connector intact. Do not publish a test post.
+Run `bridge_list_accounts` and check every registered identity. Test reads before allowing writes. Keep the existing Buffer Personal connector intact. Do not publish a test post.
 
 ## Availability, backups and stopping
 
