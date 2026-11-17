@@ -2,7 +2,7 @@
 
 This optional setup runs the bridge, two isolated PostgreSQL instances, and Keycloak locally. Tailscale Personal and Funnel provide a public HTTPS hostname without buying a domain or server. There is no extra hosting/auth subscription for personal use within their free plan. Your laptop must stay on, awake, and online. Funnel and Keycloak's resource-indicators feature are beta/experimental: this is a personal evaluation deployment, not an uptime or production-readiness guarantee.
 
-**Status:** configuration prepared; Docker, Tailscale enrollment, Buffer credentials, live OAuth, and Claude connectivity still require validation. Do not enable a public Funnel until the services and authentication are ready for that validation.
+**Status:** the Docker build, real PostgreSQL tests, realm import, gateway restrictions, OAuth negative checks, and public issuer discovery were verified on 2026-11-17. Buffer schema/credential mapping and full owner/Claude connection still require deployment-specific verification. Do not enable a public Funnel until the services and authentication are ready for that validation. See [VALIDATION.md](../VALIDATION.md).
 
 ## Actions that need you
 
@@ -27,6 +27,8 @@ npx --no-install tsx scripts/prepare-laptop.ts
 It discovers your own device hostname through `tailscale status --json` and generates private, ignored `.env.laptop`, `secrets/laptop-realm.json`, and `secrets/laptop-access.json`. It does not expose ports or create a Tailscale account. It refuses to overwrite existing configuration. Do not print, commit, or share those files. The realm import contains randomly generated OAuth/bootstrap secrets, not Buffer keys.
 
 Complete the read-only Buffer probe and reviewed schema mapping from [README](../README.md#verify-buffer-and-generate-a-contract). You need the resulting `config/buffer-contract.json` before the app starts. Test fixtures are not a substitute.
+
+For guided setup, `npx --no-install tsx scripts/key-entry.ts` starts a temporary masked form at `http://127.0.0.1:8787`. It accepts account labels with spaces and performs only authenticated catalog/`get_account` reads. It stages encrypted credentials and sanitized responses in the ignored `secrets/setup-accounts.json` for subsequent verification/onboarding; it does not register accounts, expose an admin API, or publish posts. The listener binds only to loopback, requires same-origin form submissions and a CSRF token, has no key-reading endpoint, and closes after 20 minutes. Never forward this port through Funnel. The CLI probe remains available instead.
 
 ## Run the local services
 

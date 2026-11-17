@@ -71,7 +71,7 @@ export class Store {
     identity: Identity,
     replace?: string,
   ) {
-    if (!/^[a-z0-9][a-z0-9_-]{0,47}$/.test(alias))
+    if (!/^[a-z0-9][a-z0-9 _-]{0,47}$/.test(alias))
       throw new SafeError("INVALID_ALIAS");
     const existing = (
       await this.db.query<Account>(
@@ -160,7 +160,7 @@ export class Store {
         [owner, id],
       );
     } else if (action === "rename") {
-      if (!value || !/^[a-z0-9][a-z0-9_-]{0,47}$/.test(value))
+      if (!value || !/^[a-z0-9][a-z0-9 _-]{0,47}$/.test(value))
         throw new SafeError("INVALID_ALIAS");
       await this.db.query(
         "UPDATE buffer_accounts SET alias=$3,updated_at=now() WHERE owner_id=$1 AND id=$2",

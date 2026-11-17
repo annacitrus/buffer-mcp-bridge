@@ -33,6 +33,7 @@ export function application(
         },
       },
       strictTransportSecurity: config.local ? false : undefined,
+      referrerPolicy: { policy: "same-origin" },
     }),
   );
   app.use((req, res, next) => {
@@ -153,7 +154,7 @@ export function application(
     const { alias, api_key: key, replace } = req.body;
     if (
       typeof alias !== "string" ||
-      !/^[a-z0-9][a-z0-9_-]{0,47}$/.test(alias) ||
+      !/^[a-z0-9][a-z0-9 _-]{0,47}$/.test(alias) ||
       typeof key !== "string" ||
       !key ||
       key.length > 4096

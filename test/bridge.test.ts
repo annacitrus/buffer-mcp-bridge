@@ -187,7 +187,16 @@ test("persistent operation records suppress duplicates and conflicts, encrypt re
         f.bridge.call(f.owner, "buffer_create_post", input),
       ),
     );
-    assert.ok(responses.every((x) => !x.isError));
+    assert.ok(
+      responses.every(
+        (x) =>
+          !x.isError ||
+          (x.structuredContent as any).result.status === "pending",
+      ),
+    );
+    const completed = await f.bridge.call(f.owner, "buffer_create_post", input);
+    assert.equal(completed.isError, false);
+    assert.ok((completed.structuredContent as any).result.upstream);
     assert.equal(f.calls.filter((c) => c.tool === "create_post").length, 1);
     const conflict = await f.bridge.call(f.owner, "buffer_create_post", {
       ...input,

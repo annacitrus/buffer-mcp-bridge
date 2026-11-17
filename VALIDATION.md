@@ -1,5 +1,20 @@
 # Validation record — 2026-11-16
 
+## Live local deployment checks — 2026-11-17
+
+- Docker container image built successfully with the pinned Node 24 runtime.
+- Both private PostgreSQL instances are healthy; bridge migrations applied successfully.
+- All 17 tests passed against real PostgreSQL in an isolated temporary container. Concurrent duplicates may correctly return `pending` while the original dispatch completes; completed result replay is verified afterward with no second dispatch.
+- Corrected Keycloak's required realm import filename. The owner/clients realm imported successfully and the OAuth server is running.
+- Gateway configuration validated. Local issuer discovery returns the expected HTTPS issuer with introspection/revocation metadata. Management/admin and master-realm paths return 404.
+- Live OAuth checks reject missing PKCE, the `plain` challenge method for this client, and an unregistered redirect URI.
+- Recorded and pinned actual Node/PostgreSQL/Caddy/Keycloak image digests for the laptop deployment.
+- Tailscale Funnel consent completed and the public HTTPS issuer returned 200. Authenticated introspection rejected an intentionally invalid token with `active: false`.
+- Reproduced a local form failure in Chrome with dummy input. Set a same-origin referrer policy so same-origin POSTs retain their origin; strict Host/Origin and CSRF checks remain enabled. Confirmed the corrected Chrome submission reaches validation without sending a real key. Applied the policy to the main admin interface as well.
+- Account labels now accept spaces while routing remains based on immutable UUIDs.
+
+Still pending: the user's Buffer key entry and live schema mapping, owner sign-in/password change, full code/token/introspection/revocation checks, verified account registration, and the Claude connection. Public discovery has been checked from the host; final Claude-cloud connectivity is still pending. No live post write was performed.
+
 ## Optional laptop deployment update
 
 The expanded 17-test suite passes, including exact OAuth resource/issuer/owner binding, PKCE client settings, secret generation, and rejecting invalid laptop origins. TypeScript checking and compilation pass. Docker Compose parses the laptop recipe using isolated dummy configuration; no containers were started. The local private keyring was generated and confirmed ignored by Git. The Tailscale client is not yet installed/enrolled and Docker's engine is unavailable, so Keycloak import, live OAuth, Funnel routing and Claude connectivity have not been verified. This recipe is a personal evaluation deployment and uses the documented beta/experimental Funnel/resource-indicator features.

@@ -203,7 +203,11 @@ if (
     if (!publicUrl) {
       const bin =
         process.platform === "win32"
-          ? "C:\\Program Files\\Tailscale\\tailscale.exe"
+          ? resolve(
+              process.env.ProgramFiles || "C:/Program Files",
+              "Tailscale",
+              "tailscale.exe",
+            )
           : "tailscale";
       const status = JSON.parse(
         execFileSync(bin, ["status", "--json"], {

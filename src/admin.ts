@@ -43,7 +43,7 @@ export function dashboard(accounts: Account[], token: string) {
             csrf(token) +
             '<label>Alias<input name="alias" value="' +
             escape(a.alias) +
-            '" pattern="[a-z0-9][a-z0-9_-]{0,47}" required></label><div class="actions"><button name="action" value="rename">Rename</button><button name="action" value="' +
+            '" maxlength="48" required></label><div class="actions"><button name="action" value="rename">Rename</button><button name="action" value="' +
             (a.status === "enabled" ? "disable" : "enable") +
             '">' +
             (a.status === "enabled" ? "Disable" : "Enable") +
@@ -71,7 +71,7 @@ export function addForm(token: string, replace?: Account) {
         : "") +
       '<label>Account alias<input name="alias" value="' +
       escape(replace?.alias) +
-      '" placeholder="ugc" pattern="[a-z0-9][a-z0-9_-]{0,47}" required></label><label>Buffer API key<input type="password" name="api_key" autocomplete="off" spellcheck="false" required maxlength="4096"></label><button>Verify account</button></form><p><a href="/admin">Back to accounts</a></p>',
+      '" placeholder="account label" maxlength="48" required></label><label>Buffer API key<input type="password" name="api_key" autocomplete="off" spellcheck="false" required maxlength="4096"></label><button>Verify account</button></form><p><a href="/admin">Back to accounts</a></p>',
   );
 }
 export function preview(
