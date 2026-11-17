@@ -1,5 +1,11 @@
 # Validation record — 2026-11-16
 
+## Optional laptop deployment update
+
+The expanded 17-test suite passes, including exact OAuth resource/issuer/owner binding, PKCE client settings, secret generation, and rejecting invalid laptop origins. TypeScript checking and compilation pass. Docker Compose parses the laptop recipe using isolated dummy configuration; no containers were started. The local private keyring was generated and confirmed ignored by Git. The Tailscale client is not yet installed/enrolled and Docker's engine is unavailable, so Keycloak import, live OAuth, Funnel routing and Claude connectivity have not been verified. This recipe is a personal evaluation deployment and uses the documented beta/experimental Funnel/resource-indicator features.
+
+## Original application checks
+
 Passed locally on Windows / Node 24.12.0:
 
 - TypeScript strict checking and compiled build.

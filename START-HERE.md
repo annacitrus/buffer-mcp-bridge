@@ -1,6 +1,6 @@
 # Start here on Windows
 
-This beta includes 15 local tests. Follow the full [README](README.md) for the live Buffer contract, PostgreSQL, OAuth, and deployment setup. You can run mock tests before creating keys or hosting resources.
+This beta includes 17 local tests. Follow the full [README](README.md) for the live Buffer contract, PostgreSQL, OAuth, and deployment setup. You can run mock tests before creating keys or hosting resources. For the free personal laptop route, see [deploy/LAPTOP.md](deploy/LAPTOP.md).
 
 The first live integration step is a read-only Buffer probe.
 

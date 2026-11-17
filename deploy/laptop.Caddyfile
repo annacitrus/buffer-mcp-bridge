@@ -1,0 +1,23 @@
+{
+    auto_https off
+}
+:8085 {
+    # The Tailscale public HTTPS proxy is the sole external entry point.
+    # No access logs: callbacks and token exchanges must remain private.
+    @identity path /identity/realms/buffer-bridge/* /identity/resources/*
+    handle @identity {
+        reverse_proxy identity:8080 {
+            header_up X-Forwarded-Proto https
+            flush_interval -1
+        }
+    }
+    # Block the management realm, admin console and all other identity routes.
+    handle /identity* {
+        respond "Not found" 404
+    }
+    handle {
+        reverse_proxy app:3000 {
+            flush_interval -1
+        }
+    }
+}

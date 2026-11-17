@@ -4,7 +4,7 @@ A self-hosted MCP server that connects Claude and other compatible clients to mu
 
 Register accounts in an authenticated web interface, then select an immutable account ID for each tool call. Adding a second, third, or later account requires neither another connector nor a redeployment. Existing Buffer subscriptions and channels stay separate.
 
-**Status: beta.** The application builds and has a 15-test suite using mock Buffer accounts. Authenticated Buffer schemas, a real OAuth provider, container execution, and an end-to-end Claude connection still require deployment verification. The server requires a reviewed live Buffer contract before it starts; fictional test fixtures are not a production contract. See [validation status](VALIDATION.md).
+**Status: beta.** The application builds and has a 17-test suite using mock Buffer accounts. Authenticated Buffer schemas, a real OAuth provider, container execution, and an end-to-end Claude connection still require deployment verification. The server requires a reviewed live Buffer contract before it starts; fictional test fixtures are not a production contract. See [validation status](VALIDATION.md).
 
 ## Features
 
@@ -36,6 +36,8 @@ Claude / compatible MCP client
 Bridge authentication is independent of Buffer authentication. Client access tokens are never sent to Buffer, and Buffer keys are never returned to the MCP client.
 
 ## Requirements
+
+For a no-subscription-cost personal evaluation on a Windows laptop, see [the laptop setup guide](deploy/LAPTOP.md). It uses Docker, local Keycloak/PostgreSQL, and Tailscale Funnel. The laptop must stay online; the recipe still needs live integration validation.
 
 For mock tests: Git, npm, and Node.js 24 LTS (24.12.0 or later within the 24.x line). HTTP tests require localhost networking.
 
