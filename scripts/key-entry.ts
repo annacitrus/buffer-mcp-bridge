@@ -3,7 +3,7 @@ import helmet from "helmet";
 import { rateLimit } from "express-rate-limit";
 import { randomBytes, randomUUID } from "node:crypto";
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { Ajv2020 } from "ajv/dist/2020.js";
+import { compileSchema } from "../src/schema.js";
 import { Vault, redact, SafeError } from "../src/security.js";
 import { connect } from "../src/upstream.js";
 
@@ -144,6 +144,7 @@ app.post("/verify", async (req, res) => {
       );
   busy = true;
   let remote;
+  let phase = "initialize";
   try {
     const saved: any[] = existsSync(path)
       ? JSON.parse(readFileSync(path, "utf8"))
@@ -151,10 +152,13 @@ app.post("/verify", async (req, res) => {
     if (saved.some((a) => a.alias === alias))
       throw new SafeError("LABEL_ALREADY_STAGED", 409);
     remote = await connect(key);
+    phase = "catalog";
     const tools = await remote.catalog();
+    phase = "schema";
     const get = tools.find((t) => t.name === "get_account");
-    if (!get || !new Ajv2020({ strict: false }).compile(get.inputSchema)({}))
+    if (!get || !compileSchema(get.inputSchema)({}))
       throw new SafeError("LIVE_GET_ACCOUNT_SCHEMA_CHANGED");
+    phase = "get_account";
     const account = await remote.call("get_account", {});
     if (account.isError)
       throw new SafeError("BUFFER_ACCOUNT_VERIFICATION_FAILED", 502);
@@ -183,6 +187,42 @@ app.post("/verify", async (req, res) => {
         ),
       );
   } catch (e) {
+    // Quarantine the failed probe encrypted, so it can be diagnosed/retried
+    // locally without asking the owner to disclose or repeatedly re-enter a key.
+    // This is not an account registration and never becomes model-callable.
+    const context = "local-failed-probe";
+    const error = e as any;
+    const summary = redact(
+      {
+        phase,
+        name: error?.name,
+        code: error?.code,
+        status: error?.status,
+        message: String(error?.message || "").replace(
+          /Bearer\s+[^\s"']+/gi,
+          "Bearer [REDACTED]",
+        ),
+        cause: {
+          name: error?.cause?.name,
+          code: error?.cause?.code,
+          status: error?.cause?.status,
+          message: String(error?.cause?.message || "").replace(
+            /Bearer\s+[^\s"']+/gi,
+            "Bearer [REDACTED]",
+          ),
+        },
+      },
+      [key],
+    );
+    writeFileSync(
+      "secrets/failed-setup.json",
+      JSON.stringify({
+        context,
+        alias,
+        ciphertext: vault.seal({ key, diagnostic: summary }, context),
+      }),
+      { mode: 0o600 },
+    );
     res
       .status(e instanceof SafeError ? e.status : 502)
       .type("html")
@@ -192,7 +232,7 @@ app.post("/verify", async (req, res) => {
             escape(
               e instanceof SafeError ? e.code : "BUFFER_CONNECTION_FAILED",
             ) +
-            '</p><p>Check the key and account, then <a href="/">try again</a>.</p>',
+            "</p><p>The failed verification was saved encrypted for local diagnosis. No account was registered. Please return to the chat; you do not need to re-enter this key again for diagnosis.</p>",
         ),
       );
   } finally {

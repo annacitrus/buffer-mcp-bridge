@@ -374,6 +374,7 @@ export class Bridge {
       register(
         "buffer_" + t.name,
         {
+          ...(t.inputSchema.$schema ? { $schema: t.inputSchema.$schema } : {}),
           type: "object",
           properties: {
             account_id: uuid,

@@ -2,6 +2,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { createInterface } from "node:readline/promises";
 import { connect, identity } from "../src/upstream.js";
 import { Contract, APPROVED, body } from "../src/contract.js";
+import { compileSchema } from "../src/schema.js";
 import { redact, SafeError } from "../src/security.js";
 const keyFile = process.env.BUFFER_API_KEY_FILE;
 const key = keyFile
@@ -22,9 +23,7 @@ try {
     channels = tools.find((t) => t.name === "list_channels");
   if (!get || !channels) throw new SafeError("REQUIRED_PROBE_TOOL_MISSING");
   // Validate exactly the live schemas, never a guessed publishing schema.
-  const { Ajv2020 } = await import("ajv/dist/2020.js");
-  const ajv = new Ajv2020({ strict: false });
-  if (!ajv.compile(get.inputSchema)({}))
+  if (!compileSchema(get.inputSchema)({}))
     throw new SafeError("GET_ACCOUNT_SCHEMA_CHANGED");
   const account = await remote.call("get_account", {});
   body(account);
@@ -41,7 +40,7 @@ try {
     "Enter an organization ID from that response to verify read access: ",
   );
   rl.close();
-  if (!ajv.compile(channels.inputSchema)({ organizationId }))
+  if (!compileSchema(channels.inputSchema)({ organizationId }))
     throw new SafeError("LIST_CHANNELS_SCHEMA_CHANGED");
   const channelResult = await remote.call("list_channels", { organizationId });
   body(channelResult);

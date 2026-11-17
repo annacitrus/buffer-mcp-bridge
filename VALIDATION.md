@@ -13,7 +13,14 @@
 - Reproduced a local form failure in Chrome with dummy input. Set a same-origin referrer policy so same-origin POSTs retain their origin; strict Host/Origin and CSRF checks remain enabled. Confirmed the corrected Chrome submission reaches validation without sending a real key. Applied the policy to the main admin interface as well.
 - Account labels now accept spaces while routing remains based on immutable UUIDs.
 
-Still pending: the user's Buffer key entry and live schema mapping, owner sign-in/password change, full code/token/introspection/revocation checks, verified account registration, and the Claude connection. Public discovery has been checked from the host; final Claude-cloud connectivity is still pending. No live post write was performed.
+- Authenticated Buffer Streamable HTTP initialization and complete live catalog succeeded. Verified get_account, list_channels, list_posts and get_post with read-only calls. Captured schemas and reviewed actual account/channel/post JSON pointers locally; private reports and credentials remain ignored by Git.
+- Corrected draft-07 schema handling in the contract and both probes. Validators now select draft-07, 2019-09 or 2020-12 explicitly and reject unsupported dialects. Wrapper schemas retain the upstream root dialect. Regression coverage checks tuple semantics through the SDK as well as direct validation.
+- Buffer appends a separate rateLimit text block. The response parser accepts that observed metadata envelope and rejects ambiguous additional payloads.
+- All 19 local tests and strict TypeScript checks passed. The updated Docker image built with zero reported dependency vulnerabilities.
+- Three distinct Buffer identities registered with encrypted credentials and freshly verified inventories, each with three channels. A fourth supplied label mapped to an existing identity and was not duplicated.
+- The running public bridge returns readiness 200, protected-resource metadata 200 and unauthenticated MCP 401 with the expected discovery challenge. Claude successfully validated the server URL and OAuth provider and reached its final client-configuration step.
+
+Still pending: owner sign-in/password change, complete code/token/introspection/revocation checks, and final Claude authorization/tool calls. No live post write was performed.
 
 ## Optional laptop deployment update
 

@@ -4,7 +4,7 @@ A self-hosted MCP server that connects Claude and other compatible clients to mu
 
 Register accounts in an authenticated web interface, then select an immutable account ID for each tool call. Adding a second, third, or later account requires neither another connector nor a redeployment. Existing Buffer subscriptions and channels stay separate.
 
-**Status: beta.** The application builds and has a 17-test suite using mock Buffer accounts. Authenticated Buffer schemas, a real OAuth provider, container execution, and an end-to-end Claude connection still require deployment verification. The server requires a reviewed live Buffer contract before it starts; fictional test fixtures are not a production contract. See [validation status](VALIDATION.md).
+**Status: beta.** The application builds and has a 19-test suite. A laptop deployment has verified authenticated Buffer initialization, live tool schemas, three separate account identities and channel inventories, PostgreSQL, container execution, and OAuth discovery. End-to-end Claude authorization and live writes still require verification. The server requires a reviewed live Buffer contract before it starts; fictional test fixtures are not a production contract. See [validation status](VALIDATION.md).
 
 ## Features
 
@@ -87,7 +87,7 @@ Use Node **24 LTS**, at least 24.12.0; update to its current security patch befo
 
 3. The probe performs authenticated Streamable HTTP initialization, follows every tool-catalog cursor, validates `get_account` against its actual input schema, and displays the account response in your private terminal. Enter an organization ID from that response when prompted. The probe validates the live `list_channels` input schema and calls it. It never calls a mutation.
 4. It writes `config/catalog.json` (schemas) and `secrets/probe-private.json` (private account/channel samples). If initialization fails, it prints a sanitized status and does not switch APIs or transports. An HTTP status is preserved when available. No key is written to the report.
-5. Before running the full server, review those actual response shapes. Copy `config/shape.example.json` to `secrets/shape.json`, and replace its JSON pointers with paths from the actual responses. The example is **illustrative, not an assumed Buffer schema**. `account`, `organizations`, `channels`, `pageInfo`, and `postChannelId` are relative to each tool's `structuredContent` or parsed single JSON text block; identity field pointers are relative to the selected account/organization/channel object. Verify `postChannelId` using an authorized **read-only** `get_post` response before enabling edit/delete workflows. Do not use an organization name to identify an account.
+5. Before running the full server, review those actual response shapes. Copy `config/shape.example.json` to `secrets/shape.json`, and replace its JSON pointers with paths from the actual responses. The example records shapes observed on 2026-11-17; **verify them against your own live responses** before use. `account`, `organizations`, `channels`, `pageInfo`, and `postChannelId` are relative to each tool's `structuredContent` or parsed single JSON text block; identity field pointers are relative to the selected account/organization/channel object. Verify `postChannelId` using an authorized **read-only** `get_post` response before enabling edit/delete workflows. Do not use an organization name to identify an account.
 6. Rerun:
 
    ```powershell

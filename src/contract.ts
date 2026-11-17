@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
-import { Ajv2020 } from "ajv/dist/2020.js";
-import addFormats from "ajv-formats";
+import { compileSchema } from "./schema.js";
 import type { Tool } from "@modelcontextprotocol/client";
 import { SafeError, canonical } from "./security.js";
 export const APPROVED = [
@@ -45,9 +44,20 @@ export function body(result: any): any {
   if (result.isError) throw new SafeError("UPSTREAM_TOOL_ERROR", 502);
   if (result.structuredContent) return result.structuredContent;
   const blocks = result.content?.filter((x: any) => x.type === "text");
-  if (blocks?.length === 1) {
+  if (blocks?.length) {
     try {
-      return JSON.parse(blocks[0].text);
+      const values = blocks.map((x: any) => JSON.parse(x.text));
+      // Buffer appends a separate rate-limit metadata block. Accept only
+      // this observed envelope; ambiguous additional payloads fail closed.
+      if (
+        values
+          .slice(1)
+          .every(
+            (v: any) =>
+              v && Object.keys(v).length === 1 && Array.isArray(v.rateLimit),
+          )
+      )
+        return values[0];
     } catch {
       /* fail closed */
     }
@@ -62,7 +72,7 @@ export function nonempty(value: any): string {
 export class Contract {
   readonly tools: Tool[];
   readonly shape: Shape;
-  private validators = new Map<string, ReturnType<Ajv2020["compile"]>>();
+  private validators = new Map<string, ReturnType<typeof compileSchema>>();
   constructor(data: ContractData) {
     if (!data.verifiedAt || !Number.isFinite(Date.parse(data.verifiedAt)))
       throw new SafeError("CONTRACT_NOT_VERIFIED");
@@ -72,10 +82,8 @@ export class Contract {
     this.shape = data.shape;
     if (APPROVED.some((n) => !this.tools.some((t) => t.name === n)))
       throw new SafeError("APPROVED_TOOL_SCHEMA_MISSING");
-    const ajv = new Ajv2020({ strict: false, allErrors: true });
-    (addFormats as any)(ajv);
     for (const t of this.tools)
-      this.validators.set(t.name, ajv.compile(t.inputSchema));
+      this.validators.set(t.name, compileSchema(t.inputSchema));
   }
   static load(path: string) {
     return new Contract(JSON.parse(readFileSync(path, "utf8")));

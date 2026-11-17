@@ -1,15 +1,15 @@
 {
-  "_warning": "ILLUSTRATIVE ONLY. Replace pointers from actual probe responses. These are not verified Buffer response shapes. Paths are relative to structuredContent or parsed JSON text.",
-  "account": "/account",
+  "_warning": "Observed in read-only Buffer probes on 2026-11-17. Verify against your own live responses before use. Empty pointers select the root payload; Buffer may append a separate rateLimit text block.",
+  "account": "",
   "accountId": "/id",
   "email": "/email",
   "name": "/name",
   "organizations": "/organizations",
   "organizationId": "/id",
   "organizationName": "/name",
-  "channels": "/channels",
+  "channels": "",
   "channelId": "/id",
-  "channelName": "/name",
+  "channelName": "/displayName",
   "pageInfo": "/pageInfo",
-  "postChannelId": "/post/channel/id"
+  "postChannelId": "/channelId"
 }
